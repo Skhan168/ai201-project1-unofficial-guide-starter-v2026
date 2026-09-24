@@ -1,6 +1,6 @@
 # The Unofficial Guide
 
-Sameer — corpus: campus_life
+Sameer, corpus: campus_life
 
 > **This file is your submission.** Fill it in as you go — most sections get
 > written during the milestone that produces them, not at the end.
@@ -21,109 +21,106 @@ Sameer — corpus: campus_life
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
+ This is a retrieval-augmented Q&A system built on a "campus_life" corpus, around a dozen short text files covering dining hall hours, housing and laundry costs, campus shuttle schedules, job/work-hour policies, and administrative rules like meal plan tier changes. Ask it a specific, factual question about student life on campus, like dining hall closing times, laundry prices in a specific dorm, or how many hours you're allowed to work during the semester, and it retrieves the most relevant chunks from the corpus, checks them against a relevance cutoff to avoid guessing on topics it doesn't cover, and generates an answer with the source document named. Questions outside the corpus (like general trivia or unrelated how-tos) are refused rather than answered speculatively.
 
-     Milestone 5. -->
+
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** 800 characters
+**Overlap:** 120 characters
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+My documents are short. Most files in this corpus run 300 to 450 characters, well under the 800-character chunk size. Running python app.py chunks -n 5 confirmed this: every sampled chunk was produced by fallback_split at index #0, meaning no document was long enough to actually be split. I kept the default 800 rather than lowering it, because my documents read as single complete thoughts even when they cover multiple related facts. For example, the Innisfree Hall chunk covers room layout, laundry cost, and noise policy together, and splitting it would break facts that belong together into separate, less useful pieces. The 120-character overlap currently does nothing in practice since no file gets split, but I'm leaving it in place in case future documents in this corpus are longer.
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
 
-     Milestone 3. -->
 
 ## Sample Chunks
 
-<!-- Five chunks, pasted as text. Label each one and name the file it came from
-     AND the function that produced it — the grader checks your code against
-     what you claim here.
+**Chunk 1** — source: `admin_add_drop_deadline.txt#0` — produced by: `chunker.py::fallback_split`
 
-     `python app.py chunks -n 5` prints all three for you. Copy them straight
-     across.
+On the add/drop deadline
 
-     Milestone 3. -->
+You can add a course through the end of the second week. Dropping is a longer window, through the end of week six, but a drop after week two shows as a W on your transcript. Nothing anywhere on the registrar's site says this plainly, and students find out from each other.
 
-**Chunk 1** — source: `` — produced by: ``
 
-```
-```
+**Chunk 2** — source: `course_biol_160.txt#0` — produced by: `chunker.py::fallback_split`
 
-**Chunk 2** — source: `` — produced by: ``
+BIOL 160 Cell Biology
 
-```
-```
+I lived here my sophomore year. Format is lecture three times a week with a weekly lab. Assessment: four unit tests and a cumulative final. Not curved.
 
-**Chunk 3** — source: `` — produced by: ``
+Expect 9 to 11 hours a week, the heaviest first-year course by reputation.
 
-```
-```
+The one piece of advice: the unit tests come fast, roughly every three weeks; falling behind once is very hard to recover from.
 
-**Chunk 4** — source: `` — produced by: ``
 
-```
-```
+**Chunk 3** — source: `course_hist_118_workload.txt#0` — produced by: `chunker.py::fallback_split`
 
-**Chunk 5** — source: `` — produced by: ``
+Workload for HIST 118 Modern World History
 
-```
-```
+People keep asking so: a lot of reading, about 120 pages a week, but no problem sets. That's real time, not optimistic time.
+
+It's front-loaded. The first month is heavier than the rest, partly because you're learning the format.
+
+
+**Chunk 4** — source: `dining_pellew_dining_hall_followup.txt#0` — produced by: `chunker.py::fallback_split`
+
+Re: Pellew Dining Hall
+
+Adding to what people have said about Pellew Dining Hall. The wait figure of 12 to 18 minutes at peak matches what I've seen. If you're trying to eat between classes, go before 11:45 and it's a different building entirely.
+
+Also worth saying: the furthest hall from anywhere, next to the athletics centre. Nobody tells you this at orientation.
+
+
+**Chunk 5** — source: `housing_innisfree_hall.txt#0` — produced by: `chunker.py::fallback_split`
+
+Innisfree Hall, what it's actually like
+
+Transferred in last year, so take this with a grain of salt. Built 1991, renovated 2022. Rooms are doubles arranged as pairs sharing one bathroom between two rooms.
+
+The good: the shared-bathroom-between-two-rooms arrangement is the best compromise on campus.
+
+The bad: no air conditioning, which matters for the first three weeks of September.
+
+Laundry costs $1.75 wash, $1.75 dry, app-based. On noise: moderate; the building is L-shaped and the short wing is much quieter.
+
 
 ## Sample Answer
 
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
-
-**Question:**
+**Question:** What time does Halden Hall dining hall close?
 
 **Answer:**
 
-```
-```
+Halden Hall closes at 7:00 pm.
 
-**My relevance cutoff:**
+Source: dining_halden_hall.txt (also mentioned in dining_halden_hall_followup.txt)
 
-<!-- The number you set in config.py, and how you got there.
+**My relevance cutoff:** 0.6
 
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
+I set this using the default from config.py, then checked it against real distances from my 5 test questions and 5 out-of-scope questions. My in-corpus questions all scored between 0.171 and 0.411, while every out-of-scope question scored between 0.825 and 0.934, a wide, clean gap with nothing near the middle. 0.6 sits comfortably inside that gap, closer to the in-corpus side, so I kept the default rather than adjusting it.
 
-     Milestone 4. -->
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| What time does Halden Hall dining hall close? | Yes | 0.266 |
+| How much does it cost to do laundry in Morrow House? | Yes | 0.186 |
+| How often does the campus shuttle run on weekends? | Yes | 0.411 |
+| How many hours can we work during the semester? | Yes | 0.379 |
+| How long do I have to change my meal plan tier at the start of the semester? | Yes | 0.171 |
+| What is the capital of Mongolia? | No | 0.825 |
+| How do I change the oil in a diesel engine? | No | 0.934 |
+| Who won the 1994 World Cup? | No | 0.886 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.844 |
+| How do I write a for loop in Rust? | No | 0.896 |
+
 
 ## How I Used AI
 
-<!-- Two specific moments. For each: what you asked for, what came back, and
-     what you changed about it.
+**1.** After running `python app.py chunks -n 5` and seeing every sample chunk come back at index `#0` produced by `fallback_split`, I asked why that was happening. The AI explained that my `CHUNK_SIZE` of 800 characters was larger than any single document in my corpus, so the chunker never actually split anything. That explanation changed my chunking writeup: instead of just reporting the default numbers, I checked whether 800 was still the right call for my corpus and decided to keep it, since my documents read as complete thoughts and splitting them would break facts that belong together, like the Innisfree Hall chunk covering room layout, laundry cost, and noise policy all at once.
 
-     "I asked Claude to write the chunking function from my notes. It ignored
-     the overlap, so I added that myself" is the level of detail we're after.
-     "I used AI to help me code" is not.
+**2.** I asked for help running my out-of-scope test questions through `ask` after my laptop crashed and I reopened the terminal. The commands failed with a "file not found" error because I was one directory level too high. The AI diagnosed that I'd activated the virtual environment without `cd`-ing into the project folder first, and gave me the correct `cd` command, which fixed it.
 
-     Milestone 5. -->
-
-**1.**
-
-**2.**
-
-<!-- ── Stretch features ─────────────────────────────────────────────────────
-     Doing one? Say so here BEFORE you start. A feature this README never
-     claims earns nothing.
-     ───────────────────────────────────────────────────────────────────────── -->
+No stretch features attempted.
 
 ---
 
@@ -147,11 +144,11 @@ Sameer — corpus: campus_life
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
+| 1. Retrieved chunks contain the answer | 4 of 5 |  |  |  |  |
 | 2. Every answer names a source | 5 of 5 |  |  |  |  |
 | 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 4. Chunk boundaries don't split facts across files | 4 of 5 |  |  |  |  |
+| 5. Answers don't add unverified claims beyond the cited source | 4 of 5 |  |  |  |  |
 
 <!-- Underneath, paste the REAL output for each criterion from one of your
      runs — the actual text your system produced, not a description of it.
