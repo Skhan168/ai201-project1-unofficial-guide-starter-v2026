@@ -45,6 +45,10 @@ TOP_K = 5               # how many chunks to pull back per question
 # Most corpora land somewhere between 0.45 and 0.75.
 THRESHOLD = 0.6
 
+# Unit 2 improvement: hybrid search. Off by default so `--label before`
+# stays the original behavior. Flip to True, re-index, then run `--label after`.
+USE_HYBRID_SEARCH = True
+HYBRID_ALPHA = 0.5   # weight on semantic similarity; 1-HYBRID_ALPHA goes to BM25 keyword score
 
 # ─── Models ──────────────────────────────────────────────────────────────────
 # Embeddings run on your own machine and cost no API quota.
