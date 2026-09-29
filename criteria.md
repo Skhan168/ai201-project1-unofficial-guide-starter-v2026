@@ -24,6 +24,10 @@ contains the answer.
 
 **Why this target:** When I ran my test questions, one of them (the campus shuttle question) retrieved several clearly unrelated documents alongside the correct one, meaning the right chunk didn't always come back cleanly on top. I expect that noise to occasionally push a genuinely relevant chunk out of contention on a bad day, so I'm not requiring a perfect 5 of 5.
 
+**Revised in unit 2:** For at least 5 of 5 questions, the top-ranked chunk is within 0.3 distance.
+
+ **Why revised:** The original version asked whether the retrieved set merely *included* a chunk with the answer, and that turned out to be unmeasurable in any way that could fail — all 3 runs came back 5 of 5 without exception, which meant the criterion wasn't actually testing anything about retrieval quality, just whether the gate let the question through at all. The revised version can fail, and did: when I tested it, the shuttle-schedule and work-hours questions retrieved the right chunk but at distances of 0.411 and 0.379, above the 0.3 bar, while the other three questions cleared it easily.
+
 ---
 
 ## 2. Every answer names a source
